@@ -1,58 +1,175 @@
 'use client'
 
-import React from 'react'
-import type { Character, Image } from '@prisma/client'
+import { Image } from '@prisma/client'
+import { useState } from 'react'
+import { Play, Loader2, Video as VideoIcon } from 'lucide-react'
 
-// Frontend type where BigInt fields are strings (serialization)
-export type CharacterClient = Omit<Character, 'seed'> & {
+// Define the type for Character used on the client side
+// The 'seed' comes from the DB as BigInt, but is serialized to string for JSON API
+export type CharacterClient = {
+    id: string
+    name: string
+    fixed_prompt: string
     seed: string
+    createdAt: Date // or string if purely from JSON
+    updatedAt: Date
     images: Image[]
 }
 
 interface CharacterGalleryProps {
     characters: CharacterClient[]
-    onSelectCharacter: (char: CharacterClient) => void
+    onSelectCharacter: (character: CharacterClient) => void
     selectedCharacterId?: string
 }
 
-export function CharacterGallery({ characters, onSelectCharacter, selectedCharacterId }: CharacterGalleryProps) {
+export function CharacterGallery({
+    characters,
+    onSelectCharacter,
+    selectedCharacterId,
+}: CharacterGalleryProps) {
+
+    // State to track loading videos by image ID
+    const [videoLoading, setVideoLoading] = useState<Record<string, boolean>>({})
+    // State to store generated videos by image ID
+    const [videos, setVideos] = useState<Record<string, string>>({})
+
+    const handleGenerateVideo = async (e: React.MouseEvent, image: Image, seed: string) => {
+        e.stopPropagation() // Prevent selecting character when clicking animate
+
+        if (videoLoading[image.id] || videos[image.id]) return
+
+        setVideoLoading(prev => ({ ...prev, [image.id]: true }))
+
+        try {
+            // 1. Start Generation
+            const startRes = await fetch('/api/character/video', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    imageBase64: image.base64,
+                    seed: seed
+                })
+            })
+            const startData = await startRes.json()
+
+            if (!startData.success) {
+                throw new Error(startData.error)
+            }
+
+            const generationId = startData.generationId
+            console.log("Video started, ID:", generationId)
+
+            // 2. Poll for result
+            const pollInterval = setInterval(async () => {
+                const pollRes = await fetch(`/api/character/video/${generationId}`)
+                const pollData = await pollRes.json()
+
+                if (pollData.success && pollData.status === 'complete') {
+                    clearInterval(pollInterval)
+                    setVideos(prev => ({ ...prev, [image.id]: pollData.videoBase64 }))
+                    setVideoLoading(prev => ({ ...prev, [image.id]: false }))
+                } else if (!pollData.success) {
+                    // Error or timeout logic could go here
+                    console.error("Polling error:", pollData.error)
+                    clearInterval(pollInterval)
+                    setVideoLoading(prev => ({ ...prev, [image.id]: false }))
+                    alert("Video generation failed during polling.")
+                }
+                // If in-progress, just wait for next tick
+            }, 2000)
+
+        } catch (err) {
+            console.error(err)
+            alert("Failed to start video generation")
+            setVideoLoading(prev => ({ ...prev, [image.id]: false }))
+        }
+    }
+
+    if (characters.length === 0) {
+        return (
+            <div className="p-12 border border-white/10 rounded-2xl bg-white/5 text-center">
+                <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span className="text-3xl">👻</span>
+                </div>
+                <p className="text-white font-medium text-lg">No characters yet</p>
+                <p className="text-gray-400">Create your first AI muse on the left to get started.</p>
+            </div>
+        )
+    }
+
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {characters.map((char) => (
                 <div
                     key={char.id}
-                    className={`border rounded-lg p-4 cursor-pointer transition-all ${selectedCharacterId === char.id ? 'border-blue-500 ring-2 ring-blue-200' : 'border-gray-200 hover:border-gray-300'}`}
                     onClick={() => onSelectCharacter(char)}
+                    className={`
+            group relative rounded-2xl overflow-hidden cursor-pointer transition-all duration-300
+            ${selectedCharacterId === char.id
+                            ? 'ring-2 ring-pink-500 shadow-xl shadow-pink-500/20 scale-[1.02]'
+                            : 'hover:scale-[1.02] hover:ring-2 hover:ring-white/20 border border-white/10'}
+          `}
                 >
-                    <div className="flex justify-between items-center mb-2">
-                        <h3 className="font-bold text-lg">{char.name}</h3>
-                        <span className="text-xs text-gray-500">Seed: {char.seed}</span>
-                    </div>
-                    <p className="text-sm text-gray-600 mb-2 truncate" title={char.fixed_prompt}>{char.fixed_prompt}</p>
-
-                    <div className="grid grid-cols-2 gap-2">
-                        {char.images.map((img) => (
-                            <div key={img.id} className="relative aspect-square bg-gray-100 rounded overflow-hidden group">
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img
-                                    src={`data:image/png;base64,${img.base64}`}
-                                    alt={img.prompt_used}
-                                    className="object-cover w-full h-full"
+                    {/* Main Display Image (First in list) */}
+                    <div className="aspect-[3/4] relative bg-black">
+                        {char.images.length > 0 ? (
+                            // Use the video if available, else the image
+                            videos[char.images[0].id] ? (
+                                <video
+                                    src={`data:video/mp4;base64,${videos[char.images[0].id]}`}
+                                    autoPlay
+                                    loop
+                                    muted
+                                    playsInline
+                                    className="w-full h-full object-cover"
                                 />
-                                <div className="absolute inset-0 bg-black/50 text-white text-xs p-2 opacity-0 group-hover:opacity-100 transition-opacity overflow-auto">
-                                    {img.prompt_used}
-                                </div>
+                            ) : (
+                                <img
+                                    src={`data:image/png;base64,${char.images[0].base64}`}
+                                    alt={char.images[0].prompt_used}
+                                    className="w-full h-full object-cover"
+                                />
+                            )
+                        ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-gray-900 text-gray-600">
+                                No Image
                             </div>
-                        ))}
+                        )}
+
+                        {/* Overlay Gradient */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-90"></div>
+
+                        {/* Content Overlay */}
+                        <div className="absolute bottom-0 left-0 right-0 p-4">
+                            <h3 className="text-xl font-bold text-white mb-1">{char.name}</h3>
+                            <p className="text-xs text-gray-400 font-mono mb-3 truncate opacity-80">{char.images[0]?.prompt_used}</p>
+
+                            <div className="flex gap-2">
+                                {/* Animate Button (Video Trigger) */}
+                                {char.images.length > 0 && !videos[char.images[0].id] && (
+                                    <button
+                                        onClick={(e) => handleGenerateVideo(e, char.images[0], char.seed)}
+                                        disabled={videoLoading[char.images[0].id]}
+                                        className="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white text-xs font-bold py-2 px-3 rounded-lg flex items-center gap-2 border border-white/10 transition-colors"
+                                    >
+                                        {videoLoading[char.images[0].id] ? (
+                                            <Loader2 size={12} className="animate-spin" />
+                                        ) : (
+                                            <VideoIcon size={12} />
+                                        )}
+                                        {videoLoading[char.images[0].id] ? 'Generating...' : 'Animate'}
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Seed Badge */}
+                    <div className="absolute top-3 right-3 bg-black/40 backdrop-blur-md px-2 py-1 rounded text-[10px] font-mono text-white/50 border border-white/5">
+                        SEED: {char.seed.toString().slice(0, 4)}...
                     </div>
                 </div>
             ))}
-
-            {characters.length === 0 && (
-                <div className="col-span-full text-center text-gray-500 py-10">
-                    No characters created yet. Create one to get started!
-                </div>
-            )}
         </div>
     )
 }
