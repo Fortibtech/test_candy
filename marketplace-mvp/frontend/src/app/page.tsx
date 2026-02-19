@@ -39,9 +39,14 @@ export default function Home() {
         }
     };
 
+    // Debounce search term
     useEffect(() => {
-        fetchProducts();
-    }, []);
+        const delaySearch = setTimeout(() => {
+            fetchProducts();
+        }, 500); // Wait 500ms after user stops typing
+
+        return () => clearTimeout(delaySearch);
+    }, [searchTerm, minPrice, maxPrice]); // Re-run when these change
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
