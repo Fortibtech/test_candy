@@ -67,7 +67,7 @@ export default function ProductPage() {
     if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div></div>;
     if (!product) return <div className="min-h-screen flex items-center justify-center">Produit non trouvé</div>;
 
-    const isSeller = user?.email === product.seller.email; // Ideally check IDs but email works for MVP
+    const isSeller = user?.email === product.seller?.email; // Safe access
 
     return (
         <div className="max-w-7xl mx-auto px-4 py-8">

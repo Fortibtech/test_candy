@@ -37,6 +37,7 @@ let ProductsService = class ProductsService {
     async findOne(id) {
         return this.prisma.product.findUnique({
             where: { id },
+            include: { seller: { select: { name: true, email: true } } }
         });
     }
     async create(data) {
