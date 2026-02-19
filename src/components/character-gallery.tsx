@@ -61,21 +61,28 @@ export function CharacterGallery({
 
             // 2. Poll for result
             const pollInterval = setInterval(async () => {
-                const pollRes = await fetch(`/api/character/video/${generationId}`)
-                const pollData = await pollRes.json()
+                try {
+                    const pollRes = await fetch(`/api/character/video/${generationId}`)
+                    const pollData = await pollRes.json()
+                    console.log("Polling video status:", pollData)
 
-                if (pollData.success && pollData.status === 'complete') {
+                    if (pollData.success && pollData.status === 'complete') {
+                        clearInterval(pollInterval)
+                        console.log("Video complete, setting URL:", pollData.videoBase64)
+                        setVideos(prev => ({ ...prev, [image.id]: pollData.videoBase64 }))
+                        setVideoLoading(prev => ({ ...prev, [image.id]: false }))
+                    } else if (!pollData.success) {
+                        // Error or timeout logic could go here
+                        console.error("Polling error:", pollData.error)
+                        clearInterval(pollInterval)
+                        setVideoLoading(prev => ({ ...prev, [image.id]: false }))
+                        alert("Video generation failed during polling.")
+                    }
+                    // If in-progress, just wait for next tick
+                } catch (e) {
+                    console.error("Polling fetch error:", e)
                     clearInterval(pollInterval)
-                    setVideos(prev => ({ ...prev, [image.id]: pollData.videoBase64 }))
-                    setVideoLoading(prev => ({ ...prev, [image.id]: false }))
-                } else if (!pollData.success) {
-                    // Error or timeout logic could go here
-                    console.error("Polling error:", pollData.error)
-                    clearInterval(pollInterval)
-                    setVideoLoading(prev => ({ ...prev, [image.id]: false }))
-                    alert("Video generation failed during polling.")
                 }
-                // If in-progress, just wait for next tick
             }, 2000)
 
         } catch (err) {
@@ -116,16 +123,24 @@ export function CharacterGallery({
                             // Use the video if available, else the image
                             videos[char.images[0].id] ? (
                                 <video
-                                    src={`data:video/mp4;base64,${videos[char.images[0].id]}`}
+                                    src={videos[char.images[0].id].startsWith('http')
+                                        ? videos[char.images[0].id]
+                                        : `data:video/mp4;base64,${videos[char.images[0].id]}`}
+                                    poster={char.images[0].base64.startsWith('http')
+                                        ? char.images[0].base64
+                                        : `data:image/png;base64,${char.images[0].base64}`}
                                     autoPlay
                                     loop
                                     muted
                                     playsInline
-                                    className="w-full h-full object-cover"
+                                    controls
+                                    className="w-full h-full object-cover z-40 relative"
                                 />
                             ) : (
                                 <img
-                                    src={`data:image/png;base64,${char.images[0].base64}`}
+                                    src={char.images[0].base64.startsWith('http')
+                                        ? char.images[0].base64
+                                        : `data:image/png;base64,${char.images[0].base64}`}
                                     alt={char.images[0].prompt_used}
                                     className="w-full h-full object-cover"
                                 />
@@ -136,21 +151,21 @@ export function CharacterGallery({
                             </div>
                         )}
 
-                        {/* Overlay Gradient */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-90"></div>
+                        {/* Overlay Gradient - allow clicks to pass through to video controls */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-90 pointer-events-none z-20"></div>
 
                         {/* Content Overlay */}
-                        <div className="absolute bottom-0 left-0 right-0 p-4">
+                        <div className="absolute bottom-0 left-0 right-0 p-4 pointer-events-none z-30">
                             <h3 className="text-xl font-bold text-white mb-1">{char.name}</h3>
                             <p className="text-xs text-gray-400 font-mono mb-3 truncate opacity-80">{char.images[0]?.prompt_used}</p>
 
                             <div className="flex gap-2">
-                                {/* Animate Button (Video Trigger) */}
+                                {/* Animate Button needs to be clickable */}
                                 {char.images.length > 0 && !videos[char.images[0].id] && (
                                     <button
                                         onClick={(e) => handleGenerateVideo(e, char.images[0], char.seed)}
                                         disabled={videoLoading[char.images[0].id]}
-                                        className="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white text-xs font-bold py-2 px-3 rounded-lg flex items-center gap-2 border border-white/10 transition-colors"
+                                        className="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white text-xs font-bold py-2 px-3 rounded-lg flex items-center gap-2 border border-white/10 transition-colors pointer-events-auto"
                                     >
                                         {videoLoading[char.images[0].id] ? (
                                             <Loader2 size={12} className="animate-spin" />

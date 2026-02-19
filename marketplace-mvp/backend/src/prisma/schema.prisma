@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  name      String?
+  bio       String?
+  avatarUrl String?
+  phoneNumber String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  products  Product[]
+  orders    Order[]
+  conversationsAsBuyer Conversation[] @relation("BuyerConversations")
+  conversationsAsSeller Conversation[] @relation("SellerConversations")
+  reviews   Review[]
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  price       Float
+  imageUrl    String?
+  sellerId    Int
+  seller      User     @relation(fields: [sellerId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  orders      Order[]
+  conversations Conversation[]
+  reviews     Review[]
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  rating    Int
+  comment   String?
+  authorId  Int
+  author    User     @relation(fields: [authorId], references: [id])
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model Conversation {
+  id        Int      @id @default(autoincrement())
+  buyerId   Int
+  buyer     User     @relation("BuyerConversations", fields: [buyerId], references: [id])
+  sellerId  Int
+  seller    User     @relation("SellerConversations", fields: [sellerId], references: [id])
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id])
+  messages  Message[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Message {
+  id             Int          @id @default(autoincrement())
+  content        String
+  conversationId Int
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  senderId       Int
+  createdAt      DateTime     @default(now())
+}
+
+model Order {
+  id         Int      @id @default(autoincrement())
+  buyerId    Int
+  buyer      User     @relation(fields: [buyerId], references: [id])
+  productId  Int
+  product    Product  @relation(fields: [productId], references: [id])
+  amount     Float
+  commission Float
+  status     String   @default("PENDING") // PENDING, COMPLETED, CANCELLED
+  stripeSessionId String? @unique
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}

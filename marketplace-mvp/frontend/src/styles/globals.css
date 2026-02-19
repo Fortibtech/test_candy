@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --foreground-rgb: 26, 26, 26;
+    --background-start-rgb: 250, 249, 246;
+    --background-end-rgb: 250, 249, 246;
+}
+
+body {
+    color: #1A1A1A;
+    background-color: #FAF9F6;
+    font-family: 'Inter', sans-serif;
+    /* Ensuring a clean font */
+}
+
+@layer utilities {
+    .text-balance {
+        text-wrap: balance;
+    }
+}
