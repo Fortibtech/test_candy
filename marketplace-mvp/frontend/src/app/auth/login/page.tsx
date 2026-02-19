@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import api from '@/lib/api';
 
-export default function LoginPage() {
+function LoginContent() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const { login } = useAuth();
@@ -21,6 +21,24 @@ export default function LoginPage() {
     }, [searchParams]);
 
     const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            await login(email, password); // This now expects email, password (from context update below)
+            // If context login only takes token, we need to fix that or assume api call returns token here
+            // Based on previous file content:
+            // const response = await api.post('/auth/login', { email, password });
+            // login(response.data.access_token);
+            // router.push('/');
+        } catch (err: any) {
+            // In previous file, login was taking token.
+            // Let's stick to previous logic to be safe, but AuthContext might have changed.
+            // Checking AuthContext.tsx content shows login takes (token: string).
+            // So I should keep the api call here.
+        }
+    };
+
+    // Re-implementing the logic from previous file exactly but inside this component
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
             const response = await api.post('/auth/login', { email, password });
@@ -42,7 +60,7 @@ export default function LoginPage() {
                         <span className="block sm:inline">{successMessage}</span>
                     </div>
                 )}
-                <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+                <form className="mt-8 space-y-6" onSubmit={handleLogin}>
                     <div className="-space-y-px rounded-md shadow-sm">
                         <div>
                             <input
@@ -79,5 +97,13 @@ export default function LoginPage() {
                 </form>
             </div>
         </div>
+    );
+}
+
+export default function LoginPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Chargement...</div>}>
+            <LoginContent />
+        </Suspense>
     );
 }
