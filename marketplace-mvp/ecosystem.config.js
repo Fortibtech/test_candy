@@ -16,7 +16,7 @@ module.exports = {
             name: "marketplace-frontend",
             cwd: "./frontend",
             script: "npm",
-            args: "start -- -p 3022",
+            args: "run start:prod",
             env: {
                 NODE_ENV: "production",
                 NEXT_PUBLIC_API_URL: "https://api.marketplace.com", // CHANGE THIS TO YOUR ACTUAL DOMAIN/IP
