@@ -22,30 +22,13 @@ function LoginContent() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        try {
-            await login(email, password); // This now expects email, password (from context update below)
-            // If context login only takes token, we need to fix that or assume api call returns token here
-            // Based on previous file content:
-            // const response = await api.post('/auth/login', { email, password });
-            // login(response.data.access_token);
-            // router.push('/');
-        } catch (err: any) {
-            // In previous file, login was taking token.
-            // Let's stick to previous logic to be safe, but AuthContext might have changed.
-            // Checking AuthContext.tsx content shows login takes (token: string).
-            // So I should keep the api call here.
-        }
-    };
-
-    // Re-implementing the logic from previous file exactly but inside this component
-    const handleLogin = async (e: React.FormEvent) => {
-        e.preventDefault();
+        setError('');
         try {
             const response = await api.post('/auth/login', { email, password });
             login(response.data.access_token);
             router.push('/');
         } catch (err: any) {
-            setError(err.response?.data?.message || 'Login failed');
+            setError(err.response?.data?.message || 'Email ou mot de passe incorrect');
         }
     };
 
@@ -60,7 +43,7 @@ function LoginContent() {
                         <span className="block sm:inline">{successMessage}</span>
                     </div>
                 )}
-                <form className="mt-8 space-y-6" onSubmit={handleLogin}>
+                <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
                     <div className="-space-y-px rounded-md shadow-sm">
                         <div>
                             <input
