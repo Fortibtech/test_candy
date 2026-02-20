@@ -9,11 +9,34 @@ const config: Config = {
     theme: {
         extend: {
             colors: {
-                primary: "#1A1A1A", // Soft Black
-                secondary: "#4A3728", // Earthy Brown
-                accent: "#B76E79", // Rose Gold
-                "neutral-bg": "#FAF9F6", // Off-White / Light Beige
+                // Premium Palette
+                primary: "#18181B", // Zinc 950 - Jet Black
+                secondary: "#4A3B32", // Deep Brown - Earthy
+                accent: "#C6A87C", // Rose Gold - Elegant
+                "neutral-bg": "#FAFAF9", // Alabaster - Warm Off-white
                 surface: "#FFFFFF",
+                sand: "#F5F5F4", // Secondary Background
+                "warm-gray": "#E7E5E4", // Soft Highlights
+
+                // Functional
+                success: "#10B981",
+                error: "#EF4444",
+                warning: "#F59E0B",
+                info: "#3B82F6",
+            },
+            fontFamily: {
+                sans: ["'Plus Jakarta Sans'", "sans-serif"],
+                serif: ["'Playfair Display'", "serif"],
+            },
+            borderRadius: {
+                xl: "12px",
+                "2xl": "16px",
+                pill: "9999px",
+            },
+            boxShadow: {
+                "soft-sm": "0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)",
+                "soft-md": "0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02)",
+                "soft-lg": "0 25px 50px -12px rgba(0, 0, 0, 0.15)",
             },
             backgroundImage: {
                 "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
@@ -22,6 +45,6 @@ const config: Config = {
             },
         },
     },
-    plugins: [],
+    plugins: [require("tailwindcss-animate")],
 };
 export default config;

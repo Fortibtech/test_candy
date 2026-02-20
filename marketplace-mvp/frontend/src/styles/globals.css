@@ -3,16 +3,19 @@
 @tailwind utilities;
 
 :root {
-    --foreground-rgb: 26, 26, 26;
-    --background-start-rgb: 250, 249, 246;
-    --background-end-rgb: 250, 249, 246;
+    --foreground-rgb: 24, 24, 27;
+    /* Zinc 950 */
+    --background-start-rgb: 250, 250, 249;
+    /* Alabaster */
+    --background-end-rgb: 250, 250, 249;
 }
 
 body {
-    color: #1A1A1A;
-    background-color: #FAF9F6;
-    font-family: 'Inter', sans-serif;
-    /* Ensuring a clean font */
+    color: #18181B;
+    background-color: #FAFAF9;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 @layer utilities {

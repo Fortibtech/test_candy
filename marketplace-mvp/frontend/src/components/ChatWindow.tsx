@@ -3,8 +3,9 @@
 
 import { useState, useEffect, useRef } from 'react';
 import api from '@/lib/api';
-import { Send } from 'lucide-react';
+import { Send, Paperclip, MoreVertical } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import Button from './ui/Button';
 
 interface Message {
     id: number;
@@ -37,7 +38,7 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
 
     useEffect(() => {
         fetchMessages();
-        const interval = setInterval(fetchMessages, 5000); // Poll for new messages every 5s
+        const interval = setInterval(fetchMessages, 5000);
         return () => clearInterval(interval);
     }, [conversationId]);
 
@@ -52,29 +53,52 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
         try {
             await api.post(`/conversations/${conversationId}/messages`, { content: newMessage });
             setNewMessage('');
-            fetchMessages(); // Refresh immediately
+            fetchMessages();
         } catch (err) {
             console.error("Failed to send message", err);
         }
     };
 
-    if (loading) return <div className="p-8 text-center bg-gray-50 rounded-xl">Chargement de la discussion...</div>;
+    if (loading) return (
+        <div className="flex items-center justify-center h-[500px] bg-stone-50 rounded-2xl">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+    );
 
     return (
-        <div className="flex flex-col h-[600px] bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50/50">
-                {messages.map((msg) => {
+        <div className="flex flex-col h-[650px] bg-white rounded-3xl shadow-soft-xl border border-stone-100 overflow-hidden relative">
+            {/* Header (Optional, if not handled by page) */}
+
+            {/* Messages Area */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-stone-50/30">
+                {messages.length === 0 && (
+                    <div className="text-center py-20 opacity-50">
+                        <p className="text-sm font-bold uppercase tracking-widest text-stone-400">Début de la discussion</p>
+                    </div>
+                )}
+
+                {messages.map((msg, idx) => {
                     const isMe = msg.senderId === user?.userId;
+                    const showAvatar = !isMe && (idx === 0 || messages[idx - 1].senderId !== msg.senderId);
+
                     return (
-                        <div key={msg.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
-                            <div className={`max-w-[70%] rounded-2xl px-4 py-2 ${isMe
-                                ? 'bg-blue-600 text-white rounded-br-none'
-                                : 'bg-white border border-gray-200 text-gray-800 rounded-bl-none shadow-sm'
-                                }`}>
-                                <p className="text-sm">{msg.content}</p>
-                                <span className={`text-[10px] mt-1 block opacity-70 ${isMe ? 'text-blue-100' : 'text-gray-400'}`}>
-                                    {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                </span>
+                        <div key={msg.id} className={`flex w-full ${isMe ? 'justify-end' : 'justify-start'}`}>
+                            <div className={`flex max-w-[75%] items-end gap-2 ${isMe ? 'flex-row-reverse' : 'flex-row'}`}>
+
+                                {/* Avatar Placeholder for 'Them' */}
+                                {!isMe && (
+                                    <div className={`w-8 h-8 rounded-full bg-stone-200 flex-shrink-0 ${showAvatar ? 'visible' : 'invisible'}`}></div>
+                                )}
+
+                                <div className={`relative px-5 py-3 shadow-sm ${isMe
+                                    ? 'bg-primary text-white rounded-2xl rounded-br-sm'
+                                    : 'bg-white border border-stone-100 text-stone-800 rounded-2xl rounded-bl-sm'
+                                    }`}>
+                                    <p className="text-sm leading-relaxed">{msg.content}</p>
+                                    <span className={`text-[9px] mt-1 block opacity-70 text-right font-medium tracking-wide ${isMe ? 'text-white/70' : 'text-stone-400'}`}>
+                                        {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     );
@@ -82,21 +106,29 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
                 <div ref={messagesEndRef} />
             </div>
 
-            <form onSubmit={handleSend} className="p-4 bg-white border-t border-gray-100 flex gap-2">
+            {/* Input Area */}
+            <form onSubmit={handleSend} className="p-4 bg-white border-t border-stone-100 flex gap-3 items-center relative z-10">
+                <Button type="button" variant="ghost" size="sm" className="text-stone-400 hover:text-primary px-2">
+                    <Paperclip size={20} />
+                </Button>
+
                 <input
                     type="text"
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
                     placeholder="Écrivez votre message..."
-                    className="flex-1 px-4 py-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 focus:bg-white transition-colors"
+                    className="flex-1 bg-stone-50 border-0 focus:ring-2 focus:ring-primary/10 rounded-full px-6 py-3 text-stone-800 placeholder:text-stone-400 transition-all outline-none"
+                    autoFocus
                 />
-                <button
+
+                <Button
                     type="submit"
+                    variant="primary"
                     disabled={!newMessage.trim()}
-                    className="bg-blue-600 text-white p-2.5 rounded-full hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                    className="rounded-full w-12 h-12 p-0 flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary/20"
                 >
-                    <Send size={20} />
-                </button>
+                    <Send size={18} className={newMessage.trim() ? "ml-1" : ""} />
+                </Button>
             </form>
         </div>
     );

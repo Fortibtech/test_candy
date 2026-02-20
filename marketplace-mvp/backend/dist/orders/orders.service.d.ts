@@ -28,6 +28,7 @@ export declare class OrdersService {
             title: string;
             price: number;
             imageUrl: string | null;
+            category: string;
             sellerId: number;
         };
     } & {
@@ -50,6 +51,7 @@ export declare class OrdersService {
             title: string;
             price: number;
             imageUrl: string | null;
+            category: string;
             sellerId: number;
         };
         buyer: {

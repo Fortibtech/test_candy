@@ -22,8 +22,9 @@ let ProductsController = class ProductsController {
     constructor(productsService) {
         this.productsService = productsService;
     }
-    findAll(title, minPrice, maxPrice) {
-        return this.productsService.findAll(title, minPrice, maxPrice);
+    findAll(title, search, minPrice, maxPrice, category, sort) {
+        const queryTitle = title || search;
+        return this.productsService.findAll(queryTitle, minPrice, maxPrice, category, sort);
     }
     findOne(id) {
         return this.productsService.findOne(+id);
@@ -39,13 +40,19 @@ __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Get all products with optional filtering' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Return filtered products.' }),
     (0, swagger_1.ApiQuery)({ name: 'title', required: false, description: 'Search by title' }),
+    (0, swagger_1.ApiQuery)({ name: 'search', required: false, description: 'Alias for title search' }),
     (0, swagger_1.ApiQuery)({ name: 'minPrice', required: false, description: 'Minimum price' }),
     (0, swagger_1.ApiQuery)({ name: 'maxPrice', required: false, description: 'Maximum price' }),
+    (0, swagger_1.ApiQuery)({ name: 'category', required: false, description: 'Product category' }),
+    (0, swagger_1.ApiQuery)({ name: 'sort', required: false, description: 'Sort order (newest, price_asc, price_desc)' }),
     __param(0, (0, common_1.Query)('title')),
-    __param(1, (0, common_1.Query)('minPrice')),
-    __param(2, (0, common_1.Query)('maxPrice')),
+    __param(1, (0, common_1.Query)('search')),
+    __param(2, (0, common_1.Query)('minPrice')),
+    __param(3, (0, common_1.Query)('maxPrice')),
+    __param(4, (0, common_1.Query)('category')),
+    __param(5, (0, common_1.Query)('sort')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Number, Number]),
+    __metadata("design:paramtypes", [String, String, Number, Number, String, String]),
     __metadata("design:returntype", void 0)
 ], ProductsController.prototype, "findAll", null);
 __decorate([

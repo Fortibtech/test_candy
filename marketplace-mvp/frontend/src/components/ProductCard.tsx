@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { ShoppingBag, User } from 'lucide-react';
+import { ShoppingBag } from 'lucide-react';
 
 interface ProductProps {
     id: number;
@@ -8,13 +8,15 @@ interface ProductProps {
     price: number;
     imageUrl: string;
     sellerName: string;
+    category?: string;
 }
 
-export default function ProductCard({ id, title, price, imageUrl, sellerName }: ProductProps) {
+export default function ProductCard({ id, title, price, imageUrl, sellerName, category }: ProductProps) {
     return (
-        <Link href={`/products/${id}`} className="block group">
-            <div className="bg-transparent h-full flex flex-col">
-                <div className="relative aspect-[4/5] bg-neutral-bg w-full overflow-hidden rounded-sm mb-3">
+        <Link href={`/products/${id}`} className="block group cursor-pointer">
+            <div className="bg-transparent h-full flex flex-col gap-3">
+                {/* Image Container */}
+                <div className="relative aspect-[4/5] bg-sand w-full overflow-hidden rounded-2xl mb-1 shadow-soft-sm group-hover:shadow-soft-lg transition-all duration-500 ease-out">
                     {imageUrl ? (
                         <Image
                             src={imageUrl}
@@ -24,31 +26,52 @@ export default function ProductCard({ id, title, price, imageUrl, sellerName }: 
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         />
                     ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400">
-                            <ShoppingBag className="w-8 h-8 opacity-20" />
+                        <div className="w-full h-full flex items-center justify-center bg-sand text-stone-300">
+                            <ShoppingBag className="w-10 h-10 opacity-30" />
                         </div>
                     )}
-                    {/* Minimalist Badge */}
-                    {/* <div className="absolute top-2 right-2 bg-white px-2 py-0.5 text-[10px] font-medium text-primary uppercase tracking-wider z-10">
-                        Top Seller
-                    </div> */}
+
+                    {/* Overlay gradient for text readability if needed, or just hover effect */}
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300" />
+
+                    {/* Like Button - Appears on Hover */}
+                    <button
+                        className="absolute top-3 right-3 p-2 bg-white/80 backdrop-blur-md rounded-full text-stone-400 hover:text-red-500 hover:bg-white transition-all duration-300 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            // Handle like logic here
+                        }}
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" /></svg>
+                    </button>
                 </div>
 
-                <div className="flex-1 flex flex-col">
-                    <div className="flex justify-between items-start">
-                        <h3 className="text-sm font-medium text-primary line-clamp-1 group-hover:underline decoration-1 underline-offset-2">
-                            {title}
-                        </h3>
-                        {/* <Heart size={16} className="text-gray-400 hover:text-accent cursor-pointer ml-2 flex-shrink-0" /> */}
+                {/* Content */}
+                <div className="flex flex-col px-1">
+                    <div className="flex justify-between items-start gap-2">
+                        <div className="flex flex-col">
+                            {/* Brand/Seller text - Uppercase & Small */}
+                            <span className="text-xs font-bold tracking-widest text-gray-500 uppercase mb-1">
+                                {category || sellerName}
+                            </span>
+
+                            {/* Title - Elegant Serif or Clean Sans */}
+                            <h3 className="text-base font-medium text-primary leading-tight line-clamp-1 group-hover:text-accent transition-colors duration-300">
+                                {title}
+                            </h3>
+                        </div>
                     </div>
 
-                    <p className="text-xs text-gray-500 mt-1 mb-2 font-light">
-                        {sellerName}
-                    </p>
-
-                    <p className="text-sm font-semibold text-primary mt-auto">
-                        {price.toLocaleString('fr-FR')} €
-                    </p>
+                    <div className="flex items-center justify-between mt-2">
+                        <p className="text-base font-semibold text-primary">
+                            {price.toLocaleString('fr-FR', { minimumFractionDigits: 0 })} €
+                        </p>
+                        {/* Example of subtle micro-interaction element */}
+                        <span className="text-xs text-stone-400 group-hover:text-primary transition-colors duration-300">
+                            Voir l'article
+                        </span>
+                    </div>
                 </div>
             </div>
         </Link>

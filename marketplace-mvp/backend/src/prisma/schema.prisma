@@ -30,6 +30,7 @@ model Product {
   description String
   price       Float
   imageUrl    String?
+  category    String   @default("Autre")
   sellerId    Int
   seller      User     @relation(fields: [sellerId], references: [id])
   createdAt   DateTime @default(now())

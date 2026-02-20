@@ -13,14 +13,22 @@ export class ProductsController {
     @ApiOperation({ summary: 'Get all products with optional filtering' })
     @ApiResponse({ status: 200, description: 'Return filtered products.' })
     @ApiQuery({ name: 'title', required: false, description: 'Search by title' })
+    @ApiQuery({ name: 'search', required: false, description: 'Alias for title search' })
     @ApiQuery({ name: 'minPrice', required: false, description: 'Minimum price' })
     @ApiQuery({ name: 'maxPrice', required: false, description: 'Maximum price' })
+    @ApiQuery({ name: 'category', required: false, description: 'Product category' })
+    @ApiQuery({ name: 'sort', required: false, description: 'Sort order (newest, price_asc, price_desc)' })
     findAll(
         @Query('title') title?: string,
+        @Query('search') search?: string,
         @Query('minPrice') minPrice?: number,
         @Query('maxPrice') maxPrice?: number,
+        @Query('category') category?: string,
+        @Query('sort') sort?: string,
     ) {
-        return this.productsService.findAll(title, minPrice, maxPrice);
+        // Support both 'title' and 'search' query params
+        const queryTitle = title || search;
+        return this.productsService.findAll(queryTitle, minPrice, maxPrice, category, sort);
     }
 
     @Get(':id')

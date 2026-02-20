@@ -16,10 +16,17 @@ let ProductsService = class ProductsService {
     constructor(prisma) {
         this.prisma = prisma;
     }
-    async findAll(title, minPrice, maxPrice) {
+    async findAll(title, minPrice, maxPrice, category, sort) {
         const where = {};
         if (title) {
-            where.title = { contains: title, mode: 'insensitive' };
+            where.OR = [
+                { title: { contains: title, mode: 'insensitive' } },
+                { description: { contains: title, mode: 'insensitive' } },
+                { category: { contains: title, mode: 'insensitive' } },
+            ];
+        }
+        if (category) {
+            where.category = { equals: category, mode: 'insensitive' };
         }
         if (minPrice || maxPrice) {
             where.price = {};
@@ -28,10 +35,24 @@ let ProductsService = class ProductsService {
             if (maxPrice)
                 where.price.lte = +maxPrice;
         }
+        let orderBy = { createdAt: 'desc' };
+        if (sort) {
+            switch (sort) {
+                case 'price_asc':
+                    orderBy = { price: 'asc' };
+                    break;
+                case 'price_desc':
+                    orderBy = { price: 'desc' };
+                    break;
+                case 'newest':
+                    orderBy = { createdAt: 'desc' };
+                    break;
+            }
+        }
         return this.prisma.product.findMany({
             where,
             include: { seller: { select: { name: true, email: true } } },
-            orderBy: { createdAt: 'desc' }
+            orderBy
         });
     }
     async findOne(id) {

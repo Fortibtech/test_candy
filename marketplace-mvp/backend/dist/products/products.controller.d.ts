@@ -3,12 +3,13 @@ import { CreateProductDto } from './dto/create-product.dto';
 export declare class ProductsController {
     private readonly productsService;
     constructor(productsService: ProductsService);
-    findAll(title?: string, minPrice?: number, maxPrice?: number): Promise<{
+    findAll(title?: string, search?: string, minPrice?: number, maxPrice?: number, category?: string, sort?: string): Promise<{
         id: number;
         title: string;
         description: string;
         price: number;
         imageUrl: string | null;
+        category: string;
         sellerId: number;
         createdAt: Date;
         updatedAt: Date;
@@ -19,6 +20,7 @@ export declare class ProductsController {
         description: string;
         price: number;
         imageUrl: string | null;
+        category: string;
         sellerId: number;
         createdAt: Date;
         updatedAt: Date;
@@ -29,6 +31,7 @@ export declare class ProductsController {
         description: string;
         price: number;
         imageUrl: string | null;
+        category: string;
         sellerId: number;
         createdAt: Date;
         updatedAt: Date;

@@ -49,6 +49,7 @@ export declare class ConversationsController {
             title: string;
             price: number;
             imageUrl: string | null;
+            category: string;
             sellerId: number;
         };
         seller: {

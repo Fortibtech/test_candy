@@ -6,19 +6,30 @@ import { CheckCircle } from 'lucide-react';
 
 export default function CheckoutSuccessPage() {
     return (
-        <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-4">
-            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6">
-                <CheckCircle className="text-green-600" size={40} />
+        <div className="min-h-[80vh] flex flex-col items-center justify-center text-center px-6 bg-neutral-bg">
+            <div className="w-24 h-24 bg-emerald-50 rounded-full flex items-center justify-center mb-8 shadow-sm border border-emerald-100 animate-in zoom-in duration-500">
+                <CheckCircle className="text-emerald-600" size={48} strokeWidth={1.5} />
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">Paiement réussi !</h1>
-            <p className="text-gray-600 mb-8 max-w-md">
-                Merci pour votre achat. Votre commande a été enregistrée et le vendeur a été notifié.
+
+            <h1 className="text-4xl font-serif font-bold text-primary mb-4 animate-in slide-in-from-bottom-4 duration-700 delay-100">
+                Commande confirmée
+            </h1>
+
+            <p className="text-stone-500 mb-10 max-w-md text-lg leading-relaxed animate-in slide-in-from-bottom-4 duration-700 delay-200">
+                Merci pour votre confiance. Votre commande a été enregistrée avec succès. Vous recevrez bientôt un email de confirmation.
             </p>
-            <div className="flex gap-4">
-                <Link href="/" className="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition">
-                    Retour à l'accueil
+
+            <div className="flex flex-col sm:flex-row gap-4 w-full max-w-xs animate-in slide-in-from-bottom-4 duration-700 delay-300">
+                <Link href="/orders" className="w-full">
+                    <div className="w-full px-6 py-4 bg-primary text-white rounded-xl font-bold hover:bg-stone-800 transition-all shadow-lg shadow-stone-200 text-center">
+                        Voir ma commande
+                    </div>
                 </Link>
-                {/* Future: Link to order details */}
+                <Link href="/products" className="w-full">
+                    <div className="w-full px-6 py-4 bg-white text-stone-600 border border-stone-200 rounded-xl font-bold hover:bg-stone-50 hover:text-primary transition-all text-center">
+                        Continuer vos achats
+                    </div>
+                </Link>
             </div>
         </div>
     );

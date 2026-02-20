@@ -18,6 +18,7 @@ export declare class OrdersController {
             title: string;
             price: number;
             imageUrl: string | null;
+            category: string;
             sellerId: number;
         };
     } & {
@@ -40,6 +41,7 @@ export declare class OrdersController {
             title: string;
             price: number;
             imageUrl: string | null;
+            category: string;
             sellerId: number;
         };
         buyer: {
