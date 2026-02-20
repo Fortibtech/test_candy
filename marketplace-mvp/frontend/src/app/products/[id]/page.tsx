@@ -17,6 +17,7 @@ interface Product {
     price: number;
     imageUrl: string;
     sellerId: number;
+    category?: string;
     condition?: string;
     seller: {
         name: string;
