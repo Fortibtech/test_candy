@@ -6,10 +6,10 @@ export default function Home() {
   const fadersRef = useRef<(Element | null)[]>([]);
   const [activeTab, setActiveTab] = useState("parcours");
 
-  useEffect(() => {
-    // Réinitialiser les refs à chaque changement d'onglet
-    fadersRef.current = [];
+  // Réinitialiser les refs à chaque rendu pour n'observer que les éléments actuels
+  fadersRef.current = [];
 
+  useEffect(() => {
     const observerOptions = {
       root: null,
       rootMargin: "0px",
@@ -25,12 +25,11 @@ export default function Home() {
       });
     }, observerOptions);
 
-    // Timeout léger affiché pour laisser le temps au DOM de se peindre
-    setTimeout(() => {
-      fadersRef.current.forEach((el) => {
-        if (el) observer.observe(el);
-      });
-    }, 50);
+    const elementsToObserve = fadersRef.current;
+
+    elementsToObserve.forEach((el) => {
+      if (el) observer.observe(el);
+    });
 
     return () => observer.disconnect();
   }, [activeTab]);
