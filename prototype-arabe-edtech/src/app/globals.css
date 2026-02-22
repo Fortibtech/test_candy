@@ -1,0 +1,114 @@
+@import "tailwindcss";
+
+@theme {
+  --color-emerald-50: #ecfdf5;
+  --color-emerald-100: #d1fae5;
+  --color-emerald-200: #a7f3d0;
+  --color-emerald-300: #6ee7b7;
+  --color-emerald-400: #34d399;
+  --color-emerald-500: #10b981;
+  --color-emerald-600: #059669;
+  --color-emerald-700: #047857;
+  --color-emerald-800: #065f46;
+  --color-emerald-900: #064e3b;
+  --color-gold-50: #fefce8;
+  --color-gold-100: #fef3c7;
+  --color-gold-400: #fbbf24;
+  --color-gold-500: #f59e0b;
+  --color-gold-600: #d97706;
+  --color-sand-50: #faf9f6;
+  --color-sand-100: #f4f1ea;
+  --color-sand-200: #eaddc6;
+
+  --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  --font-arabic: var(--font-tajawal), ui-sans-serif, system-ui, sans-serif;
+  --font-arabic-serif: var(--font-amiri), ui-serif, Georgia, serif;
+
+  --shadow-soft: 0 20px 40px -15px rgba(0, 0, 0, 0.05);
+  --shadow-glow: 0 0 25px rgba(251, 191, 36, 0.4);
+  --shadow-emerald-glow: 0 10px 25px -5px rgba(16, 185, 129, 0.4);
+
+  --animate-pulse-gold: pulseGold 2s infinite;
+  --animate-subtle-bounce: subtleBounce 1.5s ease-in-out infinite;
+  --animate-fade-in-up: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes pulseGold {
+  0% {
+    box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.6);
+  }
+
+  70% {
+    box-shadow: 0 0 0 15px rgba(251, 191, 36, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(251, 191, 36, 0);
+  }
+}
+
+@keyframes subtleBounce {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+body {
+  background-color: var(--color-sand-50);
+  color: #1f2937;
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer components {
+
+  /* Ligne de Parcours Dynamique */
+  .path-line {
+    position: absolute;
+    left: 2rem;
+    top: 2rem;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(to bottom, #10b981 0%, #10b981 35%, #e5e7eb 35%, #e5e7eb 100%);
+    border-radius: 4px;
+    z-index: 0;
+  }
+
+  @media (min-width: 768px) {
+    .path-line {
+      left: 50%;
+      transform: translateX(-50%);
+    }
+  }
+
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+  }
+
+  .fade-in-up {
+    opacity: 0;
+  }
+
+  .fade-in-up.visible {
+    animation: var(--animate-fade-in-up);
+  }
+}
