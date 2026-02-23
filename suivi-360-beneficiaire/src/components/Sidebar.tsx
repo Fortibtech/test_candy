@@ -2,7 +2,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Users, BarChart3, Settings, ShieldAlert, LogOut } from 'lucide-react';
+import { Home, Users, BarChart3, Settings, LogOut } from 'lucide-react';
 
 const Sidebar = () => {
     const pathname = usePathname();
@@ -26,8 +26,8 @@ const Sidebar = () => {
                             key={link.href}
                             href={link.href}
                             className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium text-sm ${isActive
-                                    ? 'bg-primary-50 text-primary-700 font-semibold'
-                                    : 'text-neutral-500 hover:bg-neutral-50 hover:text-neutral-700'
+                                ? 'bg-primary-50 text-primary-700 font-semibold'
+                                : 'text-neutral-500 hover:bg-neutral-50 hover:text-neutral-700'
                                 }`}
                         >
                             <Icon className={`w-5 h-5 ${isActive ? 'text-primary-600' : 'text-neutral-400'}`} />

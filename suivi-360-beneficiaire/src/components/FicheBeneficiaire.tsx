@@ -28,7 +28,7 @@ const FicheBeneficiaire = () => {
                     <div className="flex justify-between items-start">
                         <div>
                             <h2 className="text-2xl font-bold text-neutral-800">Dossier Anonymisé #4092</h2>
-                            <p className="text-neutral-500 mt-1">Date d'ouverture : 12 Octobre 2024</p>
+                            <p className="text-neutral-500 mt-1">Date d&apos;ouverture : 12 Octobre 2024</p>
                         </div>
                         <div className="flex items-center gap-1.5 text-xs text-neutral-400 font-medium bg-neutral-50 px-2 py-1 rounded">
                             <Fingerprint className="w-4 h-4" />

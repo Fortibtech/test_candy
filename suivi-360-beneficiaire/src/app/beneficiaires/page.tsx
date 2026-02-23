@@ -13,7 +13,7 @@ export default function BeneficiairesPage() {
                 </div>
                 <h2 className="text-xl font-bold text-neutral-800 mb-2">Base de données chiffrée (AES-256)</h2>
                 <p className="text-neutral-500 max-w-md mx-auto">
-                    Pour des raisons de confidentialité, l'annuaire complet n'est accessible qu'aux administrateurs habilités (Niveau 4).
+                    Pour des raisons de confidentialité, l&apos;annuaire complet n&apos;est accessible qu&apos;aux administrateurs habilités (Niveau 4).
                     Utilisez la barre de recherche globale pour trouver un dossier précis via son identifiant anonymisé.
                 </p>
             </div>

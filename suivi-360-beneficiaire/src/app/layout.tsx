@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 import Sidebar from '@/components/Sidebar';
-import { Menu, Bell, Search, ShieldAlert } from 'lucide-react';
+import { Bell, Search, ShieldAlert } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Suivi 360° du Bénéficiaire | Réseau Associatif',

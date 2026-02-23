@@ -12,7 +12,7 @@ const SaisieRapide = () => {
                     <h2 className="text-lg font-bold text-neutral-800 flex items-center gap-2">
                         Zone de Saisie Rapide
                     </h2>
-                    <p className="text-sm text-neutral-500">Notes d'entretien sauvegardées et chiffrées à la volée</p>
+                    <p className="text-sm text-neutral-500">Notes d&apos;entretien sauvegardées et chiffrées à la volée</p>
                 </div>
                 <div className="flex items-center gap-2 text-xs font-medium text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full">
                     <span className="relative flex h-2 w-2">

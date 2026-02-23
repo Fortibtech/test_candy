@@ -24,7 +24,7 @@ export default function ParametresPage() {
 
                 <div className="bg-white rounded-2xl shadow-sm border border-neutral-100 p-6 opacity-60">
                     <h3 className="font-bold text-lg text-neutral-800 mb-4 border-b border-neutral-100 pb-2">Interface</h3>
-                    <p className="text-sm text-neutral-500 italic">Thème défini par l'organisation (Serein & Professionnel).</p>
+                    <p className="text-sm text-neutral-500 italic">Thème défini par l&apos;organisation (Serein & Professionnel).</p>
                 </div>
             </div>
         </div>

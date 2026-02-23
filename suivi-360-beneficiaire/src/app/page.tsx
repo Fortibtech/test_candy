@@ -3,7 +3,6 @@ import FicheBeneficiaire from '@/components/FicheBeneficiaire';
 import DashboardExtract from '@/components/DashboardExtract';
 import SaisieRapide from '@/components/SaisieRapide';
 import Timeline, { TimelineEventProps } from '@/components/Timeline';
-import { Menu, Bell, Search, ShieldAlert } from 'lucide-react';
 
 const mockEvents: TimelineEventProps[] = [
   {
@@ -42,7 +41,7 @@ export default function Home() {
     <div className="pb-12 space-y-8">
       {/* En-tête Page */}
       <div>
-        <h1 className="text-2xl font-bold text-neutral-900 tracking-tight">Vue d'ensemble</h1>
+        <h1 className="text-2xl font-bold text-neutral-900 tracking-tight">Vue d&apos;ensemble</h1>
         <p className="text-neutral-500 mt-1">Données agrégées et reporting ultra-sécurisé.</p>
       </div>
 
@@ -59,7 +58,7 @@ export default function Home() {
           <div className="bg-white rounded-2xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-neutral-100 overflow-hidden flex-1">
             <div className="px-6 py-5 border-b border-neutral-100 bg-neutral-50/50">
               <h3 className="text-lg font-bold text-neutral-800">Parcours & Historique Récent</h3>
-              <p className="text-sm text-neutral-500">Chronologie de l'accompagnement d'Exemple #4092.</p>
+              <p className="text-sm text-neutral-500">Chronologie de l&apos;accompagnement d&apos;Exemple #4092.</p>
             </div>
             <div className="p-6">
               <Timeline events={mockEvents} />
